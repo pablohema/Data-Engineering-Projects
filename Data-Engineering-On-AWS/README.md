@@ -2,12 +2,59 @@
 
 ## Platform Design
 ### Selecting the tools
+The following diagram show the tools that will be used on the next project. All them belongs to AWS ecosystem.
+![Diagram selecting tools](/img/diagram-select_tool.png)
 ### Client
+Python will be the language used for scripts.
+  - Reads .CSV
+  - Possibility to select data e.g from today or "x" number of lines
+  - Transforms each line into JSON string
+ <br/><br/>
+
 ### Connect
+- API Gateway
+- Lambda
+![Diagram connect](img/diagram-connect.png)
+<br/><br/>
+
 ### Buffer
+- Kinesis
+- Kafka
+![Diagram Buffer](img/diagram-buffer.png)
+<br/><br/>
+
 ### Process
+- Streaming Processing
+  - Lambda Functions with triggers on Source
+  - Continuous Process
+
+- Batch Processing
+  - Lambda
+  - CloudWatch for Scheduling
+<br/><br/>
+
 ### Store
+- S3 File Storage
+- DynamoDB NoSQL
+  - Wide Column Store
+  - Backend
+  - Transactions
+- Redshift Data Warehouse
+  - Analytics layer
+  - Distributed Storage and processing
+<br/><br/>
+
 ### Visualize
+- APIs
+   - Access for Apps, UIs
+   - Execute queries and transactions
+   - Simple, stateless
+- Tableau
+   - Business Intelligence Tool
+   - Installed on your pc
+   - Connects to Redshift
+<br/><br/>
+<br/><br/>
 
 ## Data Pipelines
 ### Data Ingestion Pipeline
