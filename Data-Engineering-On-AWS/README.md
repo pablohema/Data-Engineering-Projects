@@ -57,13 +57,58 @@ Python will be the language used for scripts.
 <br/><br/>
 
 ## Data Pipelines
-### Data Ingestion Pipeline
-### Stream to Raw Storage Pipeline
-### Stream to DynamoDB Pipeline
-### Visualization API Pipeline
-### Visualization Redshift Data Warehouse
-### Batch Processing Pipeline
+Diagrams and tools used in the following Pipelines along the project
+<br/><br/>
 
+### Data Ingestion Pipeline
+- Client
+  - Simulates Streaming
+  - Sends CSV Rows as JSON
+- API-Gateway
+- Lambda
+- Kinesis
+![Data ingestion pipeline diagram](img/diagram-data_ing.png)
+<br/><br/>
+
+### Stream to Raw Storage Pipeline
+- Kinesis inserts triggers Lambda for S3
+  - Lambda waits for some time
+  - Writes all messages in queue to S3 Bucket as file
+![Stream to Raw pipeline](img/diagram-stream_raw.png)
+<br/><br/>
+
+### Stream to DynamoDB Pipeline
+- Kinesis insert triggers Lambda for DynamoDB
+  - Lambda reformates/preprocesses messages
+  - Lambda writes customer data (customer + invoices)
+  - Lambda writes invoice data (invoice + stockcode)
+![Stream to dinamodb pipeline](img/diagram-stream_dynamo.png)
+<br/><br/>
+
+### Visualization API Pipeline
+- API for UI (Items in Invoice)
+   - Data rests in DynamoDB table invoices
+   - Client request Items for InvoiceNo (Request parameter)
+   - Lambda triggered by API queries Dynamo with InvoiceNo
+![Visualization API pipeline](img/diagram-vis_api.png)
+<br/><br/>
+
+### Visualization Redshift Data Warehouse
+- Kinesis Firehose Delivery Stream connects to Kinesis Data Stream
+- Firehose writes data into intermediate S3 Bucket
+- Kinesis Firehose copies data into Redshift table
+- Tableau for Analyst access
+![Visualization redshift pipeline](img/diagram-vis_redshift.png)
+<br/><br/>
+
+### Batch Processing Pipeline
+- Bulk import Pipeline
+- Triggered through Cloudwatch
+- Lambda reads from S3 folder
+- Writes data into DynamoDB
+- Writes into Redshift
+![Batchline processing pipeline](img/diagram-batch_pipe.png)
+<br/><br/>
 ---
 
 ## Data Ingestion Pipeline
@@ -77,7 +122,7 @@ Python will be the language used for scripts.
    - **Execution role:** Create a new role with basic Lambda permissions
 4. Press *Create Function*
 
-
+<br/><br/>
 
 ### Create API Gateway
 1. Open <ins>API Gateway</ins> on AWS
@@ -106,6 +151,8 @@ Python will be the language used for scripts.
 
     Of this way all the content coming through the API is forwarded to Lambda function.
 
+<br/><br/>
+
 ### Setup Kinesis 
 1. Open <ins>Kinesis</ins> on AWS
 2. Select "Create data stream" on Kinesis Data Stream
@@ -113,6 +160,8 @@ Python will be the language used for scripts.
    - **Data Stream name:** "APIdata"
    - **Capacity Mode**: Provisioned
    - Press "Create Data Stream"
+
+<br/><br/>
 
 ### Setup IAM for API
 Now, setting up IAM will make sure that Lambda function delivers data into Kinesis.
@@ -128,4 +177,8 @@ Now, setting up IAM will make sure that Lambda function delivers data into Kines
    - **Name:** "MyKinesisWriteAPIData"
    - Create policy
 7. Go to Roles and inside "test-role" add the recently created policy
+
+<br/><br/>
+
+
 
