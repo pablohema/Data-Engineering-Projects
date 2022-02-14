@@ -117,7 +117,7 @@ Diagrams and tools used in the following Pipelines along the project
 1. Open <ins>Lambda</ins> on AWS
 2. Go to Lambda Functions and press "Create Function"
 3. Fill the requeriments
-   - **Function name:** "test"
+   - **Function name:** "WriteKinesis"
    - **Runtinme**: Python 3.9
    - **Execution role:** Create a new role with basic Lambda permissions
 4. Press *Create Function*
@@ -180,5 +180,34 @@ Now, setting up IAM will make sure that Lambda function delivers data into Kines
 
 <br/><br/>
 
+### Create Ingestion Pipeline (Code)
+1. Open <ins>Kinesis</ins> on AWS
+2. Select the function "WriteKinesis"
+3. Using the code provided in the [link](code/data_ingestion_pipeline/Lambda-Code.py), copy and paste it browser while you replacing the standard code that it is automatically created after creating the function.
+*This code connects the client with Kinesis using the API through Lambda.*
 
+<br/><br/>
 
+### Create Script to Send Data
+1. Open <ins>API Gateway</ins> on AWS
+2. Stages must be created to access methods, so far the only we can do it is to test them.
+3. Go to "Actions" and press on "DeployAPI"
+4. Create new stage and name it "P" reference to production stage.
+5. Go to P and select method POST
+6. Copy the invoke URL and past it in your [URL Endpoint](code/data_ingestion_pipeline/insert_template)
+
+<br/><br/>
+
+### Test the Pipeline
+1. Run the [python file](code/data_ingestion_pipeline/insert_template)
+2. Open <ins>CloudWatch</ins> on AWS
+3. Inside LogGroups there are the logs printed by the [insert_template.py](code/data_ingestion_pipeline/insert_template) file
+
+<br/><br/>
+
+## Stream to Raw S3 Storage Pipeline
+
+### Setup S3 Bucket
+1. XXXXXXX
+
+<br/><br/>
