@@ -208,6 +208,71 @@ Now, setting up IAM will make sure that Lambda function delivers data into Kines
 ## Stream to Raw S3 Storage Pipeline
 
 ### Setup S3 Bucket
-1. XXXXXXX
+1. Open <ins>S3 Bucket</ins> on AWS
+2. Create bucket and name it "my-aws-bucket-2022", leave rest of options as it is.
+
+<br/><br/>
+
+### Setup IAM for API
+Now, setting up IAM will make sure that Lambda function delivers data into S3 Bucket.
+1. Open <ins>IAM</ins> on AWS
+2. Access to roles
+3. Create a new role using Lambda as a common use case
+4. Move to next step
+5. Create new policies
+   - Create myKinesisRead
+   - Add S3FullAccess
+   - Add Kinesis role
+6. Name it "Lambda-Kinesis-S3-Writer"
+
+<br/><br/>
+
+### Create Lambda for S3 Insert
+1. Open <ins>Lambda</ins> on AWS
+2. Press on create function
+3. Use the blueprint "kinesis-process-record-python"
+4. Select in Kinesis stream the option "APIdata"
+5. Select for existing role the one previously created
+6. Name the function as "writeKinesisS3" and press create function
+7. Use the code in [lambda_code_raw_S3.py](code/stream_to_raw_s3_storage_pipeline/lambda_code_raw_S3.py) to set the lambda.
+   
+<br/><br/>
+
+## Stream to DynamoDB Pipeline
+
+### Setup DynamoDB
+1. Open <ins>DynamoDB</ins> on AWS
+2. Create a new table
+3. Name it "Customer"
+4. Do not use default settings
+5. In Auto Scaling min and max capacity to 1 unit
+6. Create another new table "Invoice" and apply same settings
+7. Partition keys must be numbers
+   - CustomerID
+   - InvoiceNo
+
+<br/><br/>
+
+### Setup IAM for DynamoDB Stream
+1. Open <ins>IAM</ins> on AWS
+2. Access to roles
+3. Create a new role using Lambda as a common use case
+4. Move to next step
+5. Create new policies
+   - Add the executional role for Lambda
+   - Add myKinesisRead
+   - Add myDynamoDBWrite
+6. Name it "Write-To-DynamoDB-role"
+
+<br/><br/>
+
+### Create Lambda for S3 Insert
+1. Open <ins>Lambda</ins> on AWS
+2. Press on create function
+3. Use the blueprint "kinesis-process-record-python"
+4. Select in Kinesis stream the option "APIdata"
+5. Select for existing role the one previously created
+6. Name the function as "Write-To-DynamoDB" and press create function
+7. Use the code in [lambda_code_dynamodb.py](code/stream_to_dynamodb/lambda_code_dynamodb.py) to set the lambda.
 
 <br/><br/>
