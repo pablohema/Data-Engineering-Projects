@@ -9,19 +9,16 @@ Python will be the language used for scripts.
   - Reads .CSV
   - Possibility to select data e.g from today or "x" number of lines
   - Transforms each line into JSON string
- <br/><br/>
 
 ### Connect
 - API Gateway
 - Lambda
 ![Diagram connect](img/diagram-connect.png)
-<br/><br/>
 
 ### Buffer
 - Kinesis
 - Kafka
 ![Diagram Buffer](img/diagram-buffer.png)
-<br/><br/>
 
 ### Process
 - Streaming Processing
@@ -31,7 +28,6 @@ Python will be the language used for scripts.
 - Batch Processing
   - Lambda
   - CloudWatch for Scheduling
-<br/><br/>
 
 ### Store
 - S3 File Storage
@@ -42,7 +38,6 @@ Python will be the language used for scripts.
 - Redshift Data Warehouse
   - Analytics layer
   - Distributed Storage and processing
-<br/><br/>
 
 ### Visualize
 - APIs
@@ -68,22 +63,19 @@ Diagrams and tools used in the following Pipelines along the project
 - Lambda
 - Kinesis
 ![Data ingestion pipeline diagram](img/diagram-data_ing.png)
-<br/><br/>
 
 ### Stream to Raw Storage Pipeline
 - Kinesis inserts triggers Lambda for S3
   - Lambda waits for some time
   - Writes all messages in queue to S3 Bucket as file
 ![Stream to Raw pipeline](img/diagram-stream_raw.png)
-<br/><br/>
 
 ### Stream to DynamoDB Pipeline
 - Kinesis insert triggers Lambda for DynamoDB
-  - Lambda reformates/preprocesses messages
+  - Lambda reformats/preprocess messages
   - Lambda writes customer data (customer + invoices)
   - Lambda writes invoice data (invoice + stockcode)
 ![Stream to dinamodb pipeline](img/diagram-stream_dynamo.png)
-<br/><br/>
 
 ### Visualization API Pipeline
 - API for UI (Items in Invoice)
@@ -91,7 +83,6 @@ Diagrams and tools used in the following Pipelines along the project
    - Client request Items for InvoiceNo (Request parameter)
    - Lambda triggered by API queries Dynamo with InvoiceNo
 ![Visualization API pipeline](img/diagram-vis_api.png)
-<br/><br/>
 
 ### Visualization Redshift Data Warehouse
 - Kinesis Firehose Delivery Stream connects to Kinesis Data Stream
@@ -99,7 +90,6 @@ Diagrams and tools used in the following Pipelines along the project
 - Kinesis Firehose copies data into Redshift table
 - Tableau for Analyst access
 ![Visualization redshift pipeline](img/diagram-vis_redshift.png)
-<br/><br/>
 
 ### Batch Processing Pipeline
 - Bulk import Pipeline
@@ -108,26 +98,26 @@ Diagrams and tools used in the following Pipelines along the project
 - Writes data into DynamoDB
 - Writes into Redshift
 ![Batchline processing pipeline](img/diagram-batch_pipe.png)
-<br/><br/>
+
+
 ---
+<br/><br/>
 
 ## Data Ingestion Pipeline
 
 ### Create Lambda for API
 1. Open <ins>Lambda</ins> on AWS
 2. Go to Lambda Functions and press "Create Function"
-3. Fill the requeriments
+3. Fill the requirements
    - **Function name:** "WriteKinesis"
    - **Runtinme**: Python 3.9
    - **Execution role:** Create a new role with basic Lambda permissions
 4. Press *Create Function*
 
-<br/><br/>
-
 ### Create API Gateway
 1. Open <ins>API Gateway</ins> on AWS
 2. Select "Build" on REST API option
-3. Fill the requeriments
+3. Fill the requirements
    - **Select whether you would like to create a REST API or a WebSocket API:** REST
    - **In Amazon API Gateway, a REST API refers to a collection of resources and methods that can be invoked through HTTPS endpoints**: New API
    - **API Name:** "test"  
@@ -151,17 +141,13 @@ Diagrams and tools used in the following Pipelines along the project
 
     Of this way all the content coming through the API is forwarded to Lambda function.
 
-<br/><br/>
-
 ### Setup Kinesis 
 1. Open <ins>Kinesis</ins> on AWS
 2. Select "Create data stream" on Kinesis Data Stream
-3. Fill the requeriments
+3. Fill the requirements
    - **Data Stream name:** "APIdata"
    - **Capacity Mode**: Provisioned
    - Press "Create Data Stream"
-
-<br/><br/>
 
 ### Setup IAM for API
 Now, setting up IAM will make sure that Lambda function delivers data into Kinesis.
@@ -170,7 +156,7 @@ Now, setting up IAM will make sure that Lambda function delivers data into Kines
 3. Press on "Configuration" and then in "Permissions"
 4. Inside "Edit" after the "Existing role" press in "View the *rolename*"
 5. Go to "Policies" and create a policy
-6. Fill the requeriments
+6. Fill the requirements
    - **Service:** Kinesis
    - **Actions:** PutRecord & PutRecords
    - **Resources:** All resources
@@ -178,15 +164,11 @@ Now, setting up IAM will make sure that Lambda function delivers data into Kines
    - Create policy
 7. Go to Roles and inside "test-role" add the recently created policy
 
-<br/><br/>
-
 ### Create Ingestion Pipeline (Code)
 1. Open <ins>Kinesis</ins> on AWS
 2. Select the function "WriteKinesis"
 3. Using the code provided in the [link](code/data_ingestion_pipeline/Lambda-Code.py), copy and paste it browser while you replacing the standard code that it is automatically created after creating the function.
 *This code connects the client with Kinesis using the API through Lambda.*
-
-<br/><br/>
 
 ### Create Script to Send Data
 1. Open <ins>API Gateway</ins> on AWS
@@ -195,8 +177,6 @@ Now, setting up IAM will make sure that Lambda function delivers data into Kines
 4. Create new stage and name it "P" reference to production stage.
 5. Go to P and select method POST
 6. Copy the invoke URL and past it in your [URL Endpoint](code/data_ingestion_pipeline/insert_template)
-
-<br/><br/>
 
 ### Test the Pipeline
 1. Run the [python file](code/data_ingestion_pipeline/insert_template)
@@ -211,8 +191,6 @@ Now, setting up IAM will make sure that Lambda function delivers data into Kines
 1. Open <ins>S3 Bucket</ins> on AWS
 2. Create bucket and name it "my-aws-bucket-2022", leave rest of options as it is.
 
-<br/><br/>
-
 ### Setup IAM for API
 Now, setting up IAM will make sure that Lambda function delivers data into S3 Bucket.
 1. Open <ins>IAM</ins> on AWS
@@ -224,8 +202,6 @@ Now, setting up IAM will make sure that Lambda function delivers data into S3 Bu
    - Add S3FullAccess
    - Add Kinesis role
 6. Name it "Lambda-Kinesis-S3-Writer"
-
-<br/><br/>
 
 ### Create Lambda for S3 Insert
 1. Open <ins>Lambda</ins> on AWS
@@ -251,8 +227,6 @@ Now, setting up IAM will make sure that Lambda function delivers data into S3 Bu
    - CustomerID
    - InvoiceNo
 
-<br/><br/>
-
 ### Setup IAM for DynamoDB Stream
 1. Open <ins>IAM</ins> on AWS
 2. Access to roles
@@ -264,8 +238,6 @@ Now, setting up IAM will make sure that Lambda function delivers data into S3 Bu
    - Add myDynamoDBWrite
 6. Name it "Write-To-DynamoDB-role"
 
-<br/><br/>
-
 ### Create Lambda for S3 Insert
 1. Open <ins>Lambda</ins> on AWS
 2. Press on create function
@@ -276,3 +248,27 @@ Now, setting up IAM will make sure that Lambda function delivers data into S3 Bu
 7. Use the code in [lambda_code_dynamodb.py](code/stream_to_dynamodb/lambda_code_dynamodb.py) to set the lambda.
 
 <br/><br/>
+
+## Visualization API
+### Create API & Lambda for access
+1. Open <ins>API Gateway</ins> on AWS
+2. Get sure the GET method is working
+3. Go to Lambda functions
+4. Open "Lambda-Kinesis-S3-Writer" add GET method to the code.
+
+### Test the API
+1. Open <ins>Postman</ins>
+2. Create new request
+3. Open <ins>API Gateway</ins> on AWS
+   1. Enter on stages
+   2. Go to GET method and copy Invoke URL
+4. Paste the selected url
+5. On KEY write "InvoiceNo"
+6. On value write "536373"
+7. Send request
+
+<br/><br/>
+
+## Visualization Pipeline Redshift Data Warehouse
+### Setup Redshift Data Warehouse
+1. Open <ins>API Gateway</ins> on AWS
