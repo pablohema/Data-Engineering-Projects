@@ -271,4 +271,87 @@ Now, setting up IAM will make sure that Lambda function delivers data into S3 Bu
 
 ## Visualization Pipeline Redshift Data Warehouse
 ### Setup Redshift Data Warehouse
-1. Open <ins>API Gateway</ins> on AWS
+1. Main steps to configure Redshift
+   1. Configure Redshift Table
+   2. Setup VPC routing for firehose
+   3. Configure Kinesis Firehose stream
+   4. Connect to Redshift
+   5. Give Redshift external IP
+   6. Setup PowerBI and query DAta
+2. Open <ins>Redshift</ins> on AWS
+3. Press on "Create a cluster"
+4. Select free tier option and name Database "DataTest"
+5. Configure the user name and password for master user
+6. Create cluster
+
+**Please bear in mind, to keep paused the cluster while it is not used**
+
+7. Go to Cluster properties and enable "Publicly accessible"
+
+### Security Group For Firehose
+1. At the bottom of your Cluster properties, there is VPC security group. Press it
+2. Under Inbound rules, copy the IP from Firehose
+3. Go to Security Groups and add the IP from the Region that you are using
+
+### Create Redshift Tables
+1. Go to the created cluster and enter in Editor
+2. Use the create table command found in this [.txt](code/visualization_pipeline_redshift_data_warehouse/Create-Table-Redshift.txt) and insert it on query
+3. Select the create just created
+4. Now you have a preview of the table
+
+### S3 Bucket and jsonpaths.json
+1. Open <ins>S3 Bucket</ins> on AWS
+2. Create a new bucket and name it "firehoseredshift"
+3. Drag the [json-path.txt](code/visualization_pipeline_redshift_data_warehouse/json-path.txt) in the bucket. Redshift will read the file and understand how to do the transformation.
+
+### Configure Firehose
+1. Open <ins>Kinesis</ins> on AWS
+2. Go to delivery streams and create a new one
+3. Name it "test" and select "Kinesis Data Stream" as a source
+4. Select APIdata as a Kinesis Data stream
+5. Go to next step and select as a destination "Redshift"
+6. Select our cluster and introduce our master login
+7. Write the Database and Table name you want
+8. In COPY option please copy the last sentence from the [file](code/visualization_pipeline_redshift_data_warehouse/Firehose-copy-command.txt) and past it in the window
+9. In Kinesis Data Firehose modify the buffer internal to 60
+
+### Debug Redshift Streaming
+1. Go to Editor inside your cluster.
+2. Insert query to count how many row there are
+3. Check the count is same number of rows as in [TestSample.cvs](data/TestSample.csv)
+4. Ways to Debug the system
+   - Is the data coming into the API Gateway side?
+   - Is the data coming into the Kinesis?
+   - Is the data coming into the S3 Folder of Firehose?
+   - Is the insert/copy of Redshift working?
+5. Look for stl_load_errors on "Select table"
+6. Preview the data
+7. Error obtained "Invalid digit, Value 'C', Pos 0, Type: Integer"
+8. InvoiceNo is not a number but a string
+9. InvoiceNo is changed to string
+
+### Power BI
+1. Go to properties of your cluster.
+2. Inside VPC security group
+3. Edit inbound rules
+   1. Add new rule
+   2. Custom TCP
+   3. Port 5439
+   4. IP open to all internet "0.0.0.0/0"
+   5. Close
+4. Download and install Power BI in your PC
+5. Get Data... More
+6. Search for Amazon Redshift
+7. Copy End point url from cluster
+8. Paste it on Server box requirement from Power BI
+9. Insert name of the database from where Power BI will feed
+10. Data Connectivity -> DirectQuery 
+11. Insert user root credentials
+12. Select which tables you want to load
+13. Now we can play with the data!
+
+<br/><br/>
+
+## Batch Processing Pipeline
+### AWS Glue Basics
+1. Main steps to configure Redshift
