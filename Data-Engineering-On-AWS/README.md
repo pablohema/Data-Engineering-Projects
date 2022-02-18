@@ -353,5 +353,46 @@ Now, setting up IAM will make sure that Lambda function delivers data into S3 Bu
 <br/><br/>
 
 ## Batch Processing Pipeline
-### AWS Glue Basics
-1. Main steps to configure Redshift
+### AWS Glue Crawlers
+1. Go to Redshift and create another table
+2. Name it for this case "bulkimport"
+3. Go to AWS Glue and create a database "glue-transactionsdb"
+4. To create a crawler, it is needed a role
+5. Go to IAM and later to role
+6. Create role with name "AWSGlueServiceRole-bulkimport"
+7. Add the following policies
+   1. AmazonS3FullAccess
+   2. AWSGlueServiceRole
+   3. AmazonRedshiftFullAccess
+   4. Add this new [policy](code/batch_processing_pipeline/AWSGlueServiceRole-bulkimport.txt)
+8. Create crawler
+9. Name it "bulkcrawler"
+10. Type of crawler "Data Stores"
+11. Data source "S3"
+12. Add path to the bucket 
+13. Assign previously created role
+14. Frequency "On demand"
+15. Database "glue-transactionsdb"
+16. Create crawler
+17. Name it "RedshiftTransactionsCrawler"
+18. Type of crawler "Data Stores"
+19. Data source "JDBC"
+20. Add path to the bucket 
+21. Assign previously created role
+22. Frequency "On demand"
+23. Database "glue-transactionsdb"
+24. Now crawler can run anytime it is requested.
+
+### AWS Glue Jobs
+1. Inside AWS Glue go to Jobs, below ETL
+2. Click on "Add Job"
+3. Name it "glue-redshift-bulkimport"
+4. Select role "AWSGlueServiceRole-bulkimport"
+5. Type "Spark"
+6. In data target select table "transactionsredshift_public_bulkimport"
+7. It shows how it maps the source in to target
+8. To get access in S3 through the crawler we need a VPC Endpoint
+9. Go to VPC then Endpoint
+10. Create a new Endpoint
+11. Search for S3 and select the only one there is
+12. Create it
