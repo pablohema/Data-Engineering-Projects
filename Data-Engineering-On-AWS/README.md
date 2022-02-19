@@ -1,5 +1,56 @@
 # Data Engineering on AWS
 
+## Introduction 
+On this course, we will have a basic introduction on AWS Services using on Data engineering to build different types of pipelines.  
+There will be three main chapters.  
+- Platform Design, where you will find the tools used and the selected the AWS ecosystem
+- Data Pipelines, it will be shown each pipeline schema and which services will be used
+- Data Ingestion Pipeline, step by step on each pipeline building process
+  
+## Content
+- [Platform Design](#platform-design)
+  - [Selecting the tools](#selecting-the-tools)
+  - [Client](#client)
+  - [Connect](#connect)
+  - [Buffer](#buffer)
+  - [Processing](#processing)
+  - [Storage](#storage)
+  - [Visualization](#visualization)
+- [Data Pipelines](#data-pipelines)
+  - [Data Ingestion Pipeline](#data-ingestion-pipeline)
+  - [Stream to Raw Storage Pipeline](#stream-to-raw-storage-pipeline)
+  - [Stream to DynamoDB Pipeline](#stream-to-dynamodb-pipeline)
+  - [Visualization API Pipeline](#visualization-api-pipeline)
+  - [Visualization Redshift Data Warehouse](#visualization-pipeline-redshift-data-warehouse)
+  - [Batch Processing Pipeline](#batch-processing-pipeline)
+- [Data Ingestion Pipeline](#data-ingestion-pipeline-1)
+  - [Create Lambda for API](#create-lambda-for-api)
+  - [Create API Gateway](#create-api-gateway)
+  - [Setup Kinesis](#setup-kinesis)
+  - [Setup IAM for API](#setup-iam-for-api)
+  - [Create Ingestion Pipeline (Code)](#create-ingestion-pipeline-code)
+  - [Create Script to Send Data](#create-script-to-send-data)
+  - [Test the Pipeline](#test-the-pipeline)
+- [Stream to DynamoDB Pipeline](#stream-to-dynamodb-pipeline)
+  - [Setup DinamoDB](#setup-dynamodb)
+  - [Setup IAM for DynamoDB Stream](#setup-iam-for-dynamodb-stream)
+  - [Create Lambda for S3 Insert](#create-lambda-for-s3-insert)
+- [Visualization API](#visualization-api)
+  - [Create API & Lambda for access](#create-api--lambda-for-access)
+  - [Test the API](#test-the-api)
+- [Visualization Pipeline Redshift Data Warehouse](#visualization-pipeline-redshift-data-warehouse)
+  - [Setup Redshift Data Warehouse](#setup-redshift-data-warehouse)
+  - [Security Group For Firehose](#security-group-for-firehose)
+  - [Create Redshift Tables](#create-redshift-tables)
+  - [S3 Bucket and jsonpaths.json](#s3-bucket-and-jsonpathsjson)
+  - [Configure Firehose](#configure-firehose)
+  - [Debug Redshift Streaming](#debug-redshift-streaming)
+  - [Power BI](#power-bi)
+- [Batch Processing Pipeline](#batch-processing-pipeline-1)
+  - [AWS Glue Crawlers](#aws-glue-crawlers)
+  - [AWS Glue Jobs](#aws-glue-jobs)
+- [Conclusions](#conclusion)
+
 ## Platform Design
 ### Selecting the tools
 The following diagram show the tools that will be used on the next project. All them belongs to AWS ecosystem.
@@ -20,7 +71,7 @@ Python will be the language used for scripts.
 - Kafka
 ![Diagram Buffer](img/diagram-buffer.png)
 
-### Process
+### Processing
 - Streaming Processing
   - Lambda Functions with triggers on Source
   - Continuous Process
@@ -29,7 +80,7 @@ Python will be the language used for scripts.
   - Lambda
   - CloudWatch for Scheduling
 
-### Store
+### Storage
 - S3 File Storage
 - DynamoDB NoSQL
   - Wide Column Store
@@ -39,7 +90,7 @@ Python will be the language used for scripts.
   - Analytics layer
   - Distributed Storage and processing
 
-### Visualize
+### Visualization
 - APIs
    - Access for Apps, UIs
    - Execute queries and transactions
@@ -396,3 +447,23 @@ Now, setting up IAM will make sure that Lambda function delivers data into S3 Bu
 10. Create a new Endpoint
 11. Search for S3 and select the only one there is
 12. Create it
+
+
+## Conclusion
+Great introductory course to AWS services, it shows you the relation between basics services normally used in data engineering projects.  
+A lot of time has been spent on looking to fix simple issues but it is what it takes when someone is new on platform, although, this made it easier in the long rung. You learn how to dig on documentation or optimizing queries on google/stackoverflow reaching a proper solution.  
+As said, this is an introductory project so there are several points that can be improved.
+These are some of the points that I want to focus in midterm:  
+- Connect
+  - Security tokens, currently our API is completely public
+  - JSON validation schema
+  - Request body instead of query string for the API calls
+- Processing
+   -Errorhandling in Lambdas, so we can control possible errors
+- IAM
+  - Not giving to all roles full access, maximized restriction
+- Visualization
+  - Provide a security connection between Redshift and Power BI connection  
+
+
+
