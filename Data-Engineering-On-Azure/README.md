@@ -20,6 +20,9 @@
 - [Steps along the project](#steps-along-the-project)
   - [Datasets and Local Preprocessing](#datasets-and-local-preprocessing)
     - [Introduction to Datasets and local preprocessing](#introduction-to-datasets-and-local-preprocessing)
+    - [Deploying your code on Visual Studio to Docker containers](#deploying-your-code-on-visual-studio-to-docker-containers)
+  - [Azure Functions and Blob Storage](#azure-functions-and-blob-storage)
+    - [Develope Azure Functions via Python and VS Code](#develope-azure-functions-via-python-and-vs-code)
 
 
 # Introduction & Goals
@@ -123,3 +126,46 @@ Data originally taken from: https://ieee-dataport.org/open-access/detecting-dama
 # Steps along the project
 ## Datasets and Local Preprocessing
 ### Introduction to Datasets and local preprocessing
+The two datasets described on [data](#data) since there is no apparent real relation in the data between tweets and satellite images, for this project, the relation between them will be mock and randomly assigned ids from images to tweets to create an artificial relationship.  
+<br>
+![Preprocessing diagram](img/img-dataset_pre.png)
+<br>
+
+The goal in this step is to create a single JSON file that contains messages, where each object in the JSON array is merged between tweets and images.  
+Once it is done, a python script will send objects in JSON as messages via HTTP requests to Azure API Management API endpoint, emulating source of streaming data.  
+
+### Deploying your code on Visual Studio to Docker containers
+- Develop Azure Functions in Python
+   - Includes Python3, Azure Functions SDK, Docker CLI
+- Prerequisites to use this feature:
+  - Install Docker and Docker Compose
+  - Install Visual Studio Code
+  - Install the Remote - Container extension
+  - Install [Azure Functions container](https://hub.docker.com/_/microsoft-azure-functions-python)  
+
+<br>
+  
+1. Open visual studio and lets add definition
+2. Press F1
+3. Type "Remote Containers..." and select Remote-Containers: Add Development Container Configuration Files...
+4. Select Azure Functions & Python 3
+5. Press F1
+6. Search and select "Reopen in a Container"
+7. Press F1
+8. Search and select "Azure Functions: Create Function..."
+9. Create new project
+   1.  Language "Python"
+   2.  Select virtual environment from container
+   3.  Select HTTP trigger
+   4.  Name it as "-HttpTrigger1"
+   5.  Authorization level "Anonymous"
+10. Press F5 to run and debug application
+11. Use insomnia to test the function
+    - For example, name - Pablo
+    - If all is okay it will send back "Hello, Pablo. This HTTP triggered function executed successfully."
+
+<br>
+
+## Azure Functions and Blob Storage
+### Develope Azure Functions via Python and VS Code
+
