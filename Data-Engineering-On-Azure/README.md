@@ -23,6 +23,7 @@
     - [Deploying your code on Visual Studio to Docker containers](#deploying-your-code-on-visual-studio-to-docker-containers)
   - [Azure Functions and Blob Storage](#azure-functions-and-blob-storage)
     - [Develope Azure Functions via Python and VS Code](#develope-azure-functions-via-python-and-vs-code)
+    - [Deploy Azure Function to Azure Function App and Test it](#deploy-azure-function-to-azure-function-app-and-test-it)
 
 
 # Introduction & Goals
@@ -160,7 +161,7 @@ Once it is done, a python script will send objects in JSON as messages via HTTP 
    4.  Name it as "-HttpTrigger1"
    5.  Authorization level "Anonymous"
 10. Press F5 to run and debug application
-11. Use insomnia to test the function
+11. Use [insomnia](https://insomnia.rest) to test the function
     - For example, name - Pablo
     - If all is okay it will send back "Hello, Pablo. This HTTP triggered function executed successfully."
 
@@ -168,4 +169,42 @@ Once it is done, a python script will send objects in JSON as messages via HTTP 
 
 ## Azure Functions and Blob Storage
 ### Develope Azure Functions via Python and VS Code
+1. Press F1
+2. Search and select "Azure Functions: Create Function..."
+3. Create new project
+   1.  Language "Python"
+   2.  Select virtual environment from container
+   3.  Select HTTP trigger
+   4.  Name it as "HttpTriggerTweetsToBlobAndEventHub"
+   5.  Authorization level "Anonymous"
+4. Modify and adapt [__init__.py](azure-function/HttpTriggerTweetsToBlobAndEventHub/__init__.py) (Ingests body of http request + Validates JSON message from the body against predefined JSON schema) 
+```
+# Return value: Set the name property in function.json to $return.
+# With this configuration, the function's return value is persisted as an Event Hub message.
 
+# Imperative: Pass a value to the set method of the parameter declared as an Out type.
+# The value passed to set is persisted as an Event Hub message.
+```
+
+### Deploy Azure Function to Azure Function App and Test it
+1. Got to Azure VSC plugin
+2. In Functions click on cloud icon(Deploy to Function App...)
+3. Press "Create new Function App in Azure...
+4. Name it "noreur-dev-dataeng-FA"
+5. Select North Europe
+6. Consumption plan
+7. Create New Storage Account and name it "noreurdevtadaengconfig"
+8. Create new Application Insight resource and name it "noreurdevdataengain"
+9. Wait until it is deploy it
+10. Go to Azure Function App inside the recently created Function
+11. Again inside Function and there will be a Developer dashboard with metrics where it is possible to control the timing and logs.
+
+### Integrate Azure Function with Blob Storage via bindings
+1. Press F1
+2. Select Azure Functions: Add binding...
+3. Select existing Function
+4. Binding action "out"
+5. Name the binding "outputBlob"
+6. Name the container tweets/(rand-guid).json
+7. Create a new Storage account "tweetssa"
+8. Select same group as previous deployment
