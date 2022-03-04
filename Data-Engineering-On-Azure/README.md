@@ -24,7 +24,11 @@
   - [Azure Functions and Blob Storage](#azure-functions-and-blob-storage)
     - [Develope Azure Functions via Python and VS Code](#develope-azure-functions-via-python-and-vs-code)
     - [Deploy Azure Function to Azure Function App and Test it](#deploy-azure-function-to-azure-function-app-and-test-it)
-
+    - [Integrate Azure Function with Blob Storage via bindings](#integrate-azure-function-with-blob-storage-via-bindings)
+  - [Add Azure Function to Azure API management APIM](#add-azure-function-to-azure-api-management-apim)
+    - [Expose Azure Function as Backend, and Test it from Insomnia](#expose-azure-function-as-backend-and-test-it-from-insomnia)
+    - [Securely Store Secrets in Azure Key Vault and Connect APIM to Key Vault](#securely-store-secrets-in-azure-key-vault-and-connect-apim-to-key-vault)
+    - [Add Basic authentication in API Management using Key Vault and Named Values](#add-basic-authentication-in-api-management-using-key-vault-and-named-values)
 
 # Introduction & Goals
 
@@ -208,3 +212,71 @@ Once it is done, a python script will send objects in JSON as messages via HTTP 
 6. Name the container tweets/(rand-guid).json
 7. Create a new Storage account "tweetssa"
 8. Select same group as previous deployment
+
+<br>
+
+## Add Azure Function to Azure API management APIM
+### Expose Azure Function as Backend, and Test it from Insomnia
+1. Activate the Function that it was previously created.
+2. Go to APIs and then from "Create from Azure resource" select "Function App"
+3. Browse and select our Function App "noreur-dev-dataeng-FA"
+4. Press create
+5. Test the API
+   1. Copy the body from [mock_api_request file](mock_api_request.json) and past it on "Request Body"
+   2. Send it
+   3. HTTP response -> "200 - OK"
+6. Copy all the HTTP request
+7. Open Insomnia and create a new request
+8. Select JSON and past the request
+9. From the body copy the url from POST
+10. Paste it in on top bar of Insomnia post
+11. Remove from JSON body all not related to JSON
+12. Go to Header
+13. Fill host and subscription key from API
+14. Send it (200 OK - "This HTTP triggered function executed successfully)
+
+### Securely Store Secrets in Azure Key Vault and Connect APIM to Key Vault
+1. Go to our resource group
+2. Add from marketplace "Key Vault"
+3. Create a key vault
+4. Name it "noreur-dev-dataeng-kv"
+5. Select region from North Europe
+6. Press on Review-Create
+7. Go to APIM, inside Security select Managed identities and active it
+8. On key vault, go to setting and select Secrets
+9. Generate a new one
+   1. Upload options - Manual
+   2. Name - password-apim
+   3. Value - **********
+   4. Create
+10. Create another secret
+    1. Upload options - Manual
+   2. Name - username
+   3. Value - **********
+   4. Create 
+11. Move to ""noreur-dev-dataeng-APIM"
+12. Under APIs select "Named values"
+13. Create a new value
+    1.  Name - username
+    2.  Displayname - username
+    3.  Type - Key vault
+    4.  Secret - Select username
+    5.  Save
+14. Create anoter new value
+    1.  Name - password
+    2.  Displayname - password
+    3.  Type - Key vault
+    4.  Secret - Select password-apim
+    5.  Save
+
+### Add Basic authentication in API Management using Key Vault and Named Values
+1. Inside APIM group got to APIs
+2. In "Inbound processing" add provided policy, save it
+3. Go to Insomnia and test the previous request
+   1. It fails because authentication has been added to the request
+   2. Add an "Authorization" header
+   3. Encode username and password using Base64
+   4. Add on Authorization header "Basic -encoded user:password-"
+   5. Send request -200 OK
+4. Run [push_tweet.py](hurricane-proc-send-data/src/push_tweets.py), which will be running every 10s pushing tweets through the pipeline
+
