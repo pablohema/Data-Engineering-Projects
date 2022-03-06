@@ -29,15 +29,21 @@
     - [Expose Azure Function as Backend, and Test it from Insomnia](#expose-azure-function-as-backend-and-test-it-from-insomnia)
     - [Securely Store Secrets in Azure Key Vault and Connect APIM to Key Vault](#securely-store-secrets-in-azure-key-vault-and-connect-apim-to-key-vault)
     - [Add Basic authentication in API Management using Key Vault and Named Values](#add-basic-authentication-in-api-management-using-key-vault-and-named-values)
+  - [Create and Combine Event Hubs, Azure Function and Cosmos DB](#create-and-combine-event-hubs-azure-function-and-cosmos-db)
+    - [Create Event Hubs and Test Capture Events Feature](#create-event-hubs-and-test-capture-events-feature)
+  - [Write Tweets to Cosmos DB (Core SQL) from Event Hub](#write-tweets-to-cosmos-db-core-sql-from-event-hub)
+    - [Create a Cosmos DB (Core SQL) and Create a New Azure Function that writes Messages to Cosmos DB](#create-a-cosmos-db-core-sql-and-create-a-new-azure-function-that-writes-messages-to-cosmos-db)
+  - [Connect Power BI Desktop to your Cosmos DB](#connect-power-bi-desktop-to-your-cosmos-db)
+    - [Connect Power Bi Desktop via Connector, and create a dashboard](#connect-power-bi-desktop-via-connector-and-create-a-dashboard)
 
 # Introduction & Goals
 
 **Main goals:**
 >> Engineer data streaming pipeline on Azure with a main purpose to ingest and process tweets and satellite images data from Hurricane Harvey natural disaster, and serve Power BI report.
 
-This is a meta repository that contains documentation and links to two subfolders in this repository, each of them having a distinct purpose:
+This is a meta repository that contains documentation and links to two sub-folders in this repository, each of them having a distinct purpose:
 
-  1) [hurricane-proc-send-data](https://github.com/team-data-science/azure-data-engineering/tree/main/hurricane-proc-send-data). Pre-processing of tweets about the hurricane harvey events, combining it with satellite images of the building s with and without damage and simulating a streaming data source by building a python program that sends requests to a Azure API endpoint (#TODO fire CLI)
+  1) [hurricane-proc-send-data](https://github.com/team-data-science/azure-data-engineering/tree/main/hurricane-proc-send-data/../../../../../../../hurricane-proc-send-data/README.md). Pre-processing of tweets about the hurricane harvey events, combining it with satellite images of the building s with and without damage and simulating a streaming data source by building a python program that sends requests to a Azure API endpoint (#TODO fire CLI)
   
   2) [hurricane-streaming-az-funcs](https://github.com/team-data-science/azure-data-engineering/tree/main/azure-func-demo) Azure data streaming pipeline that:
         - Ingests tweets from the local source client via Azure API management having a Azure Function as backend
@@ -279,4 +285,62 @@ Once it is done, a python script will send objects in JSON as messages via HTTP 
    4. Add on Authorization header "Basic -encoded user:password-"
    5. Send request -200 OK
 4. Run [push_tweet.py](hurricane-proc-send-data/src/push_tweets.py), which will be running every 10s pushing tweets through the pipeline
+
+<br>
+
+## Create and Combine Event Hubs, Azure Function and Cosmos DB
+### Create Event Hubs and Test Capture Events Feature
+1. Go to our resource group
+2. Add from marketplace "Event hubs"
+   1. Namespace name - "noreur-dev-dataeng-EH"
+   2. Location - North Europe
+   3. Pricing tier - Standard
+   4. Review and create
+3. Create an Event Hub
+     1. Name it "noreur-dev-dataeng-EH1"
+     2. Partition Count - 2
+     3. Capture - ON
+     4. Time window - 1
+     5. Enable - "Do not emit empty files when no events occur during the Capture time window
+     6. Storage Account - Create container
+        1. Name - "captureevents"
+        2. Create
+        3. Select the container
+     7. Save it
+
+<br>
+
+## Write Tweets to Cosmos DB (Core SQL) from Event Hub
+### Create a Cosmos DB (Core SQL) and Create a New Azure Function that writes Messages to Cosmos DB
+1. Enter in Resource Group
+2. Create a resource and add "Azure Cosmos DB"
+3. Select "Core (SQL) - Recommended"
+   1. Account name - "noreur-dev-dataeng-csdb"
+   2. Location - Norway East
+   3. Capacity mode - Serverless
+   4. Create it
+4. Once it is deployed, press setup with notebook.
+5. Create new database
+6. Name it "hurricane"
+7. Create new container
+   1. Database id - Select existing "hurricane"
+   2. Container id - tweets
+   3. Partition Key - /accound_id
+   4. OK
+
+<br>
+
+## Connect Power BI Desktop to your Cosmos DB
+### Connect Power Bi Desktop via Connector, and create a dashboard
+1. Open Power BI desktop
+2. Go to Get Data - More
+3. Select Azure Cosmos DB
+   1. Copy URL from noreur-dev-dataeng-csdb overview panel
+   2. Click OK
+   3.  Copy Primary Key (only read) from noreur-dev-dataeng-csdb - Keys panel
+   4.  Click OK
+4. In the navigator select "hurricane" and press "Transform Data"
+5. Expand the database to have all columns
+6. Click in "Close & Apply" 
+7. Now, there is access to create any dashboard using the data from CosmosDB
 
